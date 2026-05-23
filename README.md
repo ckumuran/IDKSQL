@@ -2,8 +2,6 @@
 
 # IDKSQL
 
-**Ask your database anything.**
-
 ![Node.js](https://img.shields.io/badge/Node.js-20-339933?style=flat-square&logo=node.js)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?style=flat-square&logo=typescript)
 ![React](https://img.shields.io/badge/React-18-61DAFB?style=flat-square&logo=react)
@@ -11,13 +9,6 @@
 ![MySQL](https://img.shields.io/badge/MySQL-PostgreSQL-4479A1?style=flat-square&logo=mysql)
 ![VSCode](https://img.shields.io/badge/VSCode-Extension-007ACC?style=flat-square&logo=visualstudiocode)
 ![Turborepo](https://img.shields.io/badge/Turborepo-Monorepo-EF4444?style=flat-square)
-![License](https://img.shields.io/badge/License-MIT-red?style=flat-square)
-
-<br/>
-
-![IDKSQL Landing Page](./ScreenShot/IDKDEMO.jpg)
-
-*The interface that turns plain English into structured query language — locally, instantly, without phoning home to a cloud API.*
 
 </div>
 
@@ -25,11 +16,7 @@
 
 ## The Idea
 
-Databases speak SQL. Humans speak English. The gap between them has always required either years of experience or a DBA sitting next to you. IDKSQL eliminates that gap entirely.
-
-It's not a chatbot wrapper. It's not a cloud service. It's a **full-stack, local-first, schema-aware AI query engine** — a system that understands your actual database structure, generates executable SQL from plain English, detects dangerous operations before they run, and explains every query it writes. The whole thing runs on your machine, with your models, against your databases.
-
-The system feels like: **a fusion of a hacker console, database IDE, and AI copilot** — built for engineers who are tired of alt-tabbing between a terminal, a SQL client, and Stack Overflow.
+Databases speak SQL. Humans speak English. The gap between them has always required either years of experience or a DBA sitting next to you. IDKSQL eliminates that gap entirely. It's a **full-stack, local-first, schema-aware AI query engine** — a system that understands your actual database structure, generates executable SQL from plain English, detects dangerous operations before they run, and explains every query it writes. The whole thing runs on your machine, with your models, against your databases.
 
 ---
 
@@ -54,8 +41,6 @@ IDKSQL does the rest:
 9. **Generates a plain-English explanation** — "This query selects users where last_login is more than 30 days ago..."
 10. **Stores the query in history** — searchable, replayable, copyable
 
-All of it — from natural language to rendered results — in under 3 seconds on a modern laptop. No network calls to OpenAI. No API keys. No rate limits. No data leaving your machine.
-
 ---
 
 ## Screenshots
@@ -64,19 +49,13 @@ All of it — from natural language to rendered results — in under 3 seconds o
 
 ![IDKSQL Landing](./ScreenShot/IDKDEMO.jpg)
 
-> *The entry point. Black field, red grid lines, tactical typography. The landing page communicates the system's philosophy immediately: this is a precision tool, not a consumer product. The input interface is centered, uncluttered, deliberately intimidating — the same way a terminal is intimidating to someone who's never used one. To everyone else, it feels like home.*
-
 ### The Query Execution Interface
 
 ![IDKSQL Main UI](./ScreenShot/IDKSQL.jpeg)
 
-> *Live query execution against MySQL. The Monaco editor occupies the upper panel, displaying the AI-generated SQL with full syntax highlighting. Below it, the result table renders query output with column headers and row data. The terminal panel on the right logs the execution lifecycle in real time — schema extraction, prompt construction, LLM response latency, adapter execution time. AI-generated SQL and terminal feedback visible simultaneously, exactly the way a systems engineer would want it.*
-
 ### The VSCode Extension
 
 ![IDKSQL VSCode Extension](./ScreenShot/IDKTerminal.jpg)
-
-> *AI-native database interaction directly in the editor. The sidebar panel renders the full IDKSQL interface inside VSCode — connection management, natural language input, SQL preview, result table, explanation panel. No context switching. No alt-tab. Your database is right there next to your code, answering questions in the same language you're already thinking in.*
 
 ---
 
@@ -429,9 +408,6 @@ export class AdapterFactory {
   }
 }
 ```
-
-Why does adapter architecture matter? Because without it, every route handler would need `if (type === 'mysql')` branches scattered throughout the codebase. Adding a new database would mean auditing every file. With the adapter pattern, adding MongoDB support means writing one new file that implements `DatabaseAdapter`. Nothing else changes. This is why adapter architecture exists — it absorbs the combinatorial complexity of supporting multiple databases without letting that complexity leak into the rest of the system.
-
 ---
 
 ## Why Local LLMs Instead of Cloud APIs
@@ -439,11 +415,8 @@ Why does adapter architecture matter? Because without it, every route handler wo
 This decision has architectural, economic, and philosophical dimensions.
 
 **Architectural**: Cloud API latency is unpredictable. A local Ollama instance running Llama3 on a modern laptop returns responses in 1–3 seconds consistently. No cold starts. No network timeouts. No rate limiting.
-
 **Economic**: OpenAI and Anthropic charge per token. Schema injection means sending hundreds of tokens per query request. For a team of 5 engineers running 50 queries a day, cloud API costs accumulate fast. Local inference is free after setup.
-
 **Security**: Your database schema is sensitive. Column names reveal business logic. Table names reveal product architecture. Sending your schema to a cloud LLM on every query means your database structure is processed on someone else's servers. Local inference keeps schema context entirely on your machine.
-
 **Philosophical**: IDKSQL is built on the premise that AI-powered developer tools should be self-hostable, auditable, and independent. The local-first architecture is a statement as much as a technical choice.
 
 ```
@@ -489,9 +462,7 @@ export function isDangerousQuery(sql: string): DangerousQueryCheck {
 }
 ```
 
-When a dangerous query is detected, execution stops. The frontend receives a `DangerousQueryCheck` object. The `DangerousQueryModal` fires — a full-screen overlay that displays the exact SQL, the exact reason it was flagged, and two options: confirm with explicit acknowledgment, or abort.
-
-This layer exists because LLMs hallucinate. A model asked to "delete old logs" might generate `DELETE FROM logs` without a WHERE clause. Without this safety layer, that query executes and data is gone. With it, the model's hallucination becomes a human decision — not a catastrophe.
+When a dangerous query is detected, execution stops. The frontend receives a `DangerousQueryCheck` object. The `DangerousQueryModal` fires — a full-screen overlay that displays the exact SQL, the exact reason it was flagged, and two options: confirm with explicit acknowledgment, or abort. This layer exists because LLMs hallucinate. A model asked to "delete old logs" might generate `DELETE FROM logs` without a WHERE clause. Without this safety layer, that query executes and data is gone. With it, the model's hallucination becomes a human decision — not a catastrophe.
 
 ```
 AI generates: DELETE FROM users WHERE status = 'inactive'
@@ -979,24 +950,6 @@ export interface ColumnSchema {
 }
 ```
 
----
-
-## Design Philosophy
-
-The UI is built around one conviction: database tools should feel powerful, not friendly. Friendly tools are built for occasional users. Powerful tools are built for people who live in them.
-
-**Black background** — not dark gray, not charcoal. True black (`#000000`). It makes red accents hit harder and makes the content the only thing glowing on the screen.
-
-**Red grid lines** — thin, low-opacity grid overlays on every panel. They don't divide content — they establish that everything has a coordinate, a position, a purpose. The grid communicates: this is a system.
-
-**Monospace typography** — `JetBrains Mono` throughout. Not just in the code editor — in labels, in table cells, in terminal output. When everything is monospaced, columns align naturally and information density increases without feeling cluttered.
-
-**Terminal panel** — every query execution is logged in real time with timestamps, status codes, and execution durations. Users see the lifecycle, not just the result. The terminal panel turns IDKSQL from a black box into a transparent system.
-
-**No loaders except progress** — when IDKSQL is generating SQL, the terminal panel updates in real time. There is no spinner and no blank wait state. The system narrates its own operation. Idle states feel like the system is broken. Narrated states feel like the system is working.
-
----
-
 ## Prompt Engineering Breakdown
 
 The quality of IDKSQL's SQL output is entirely determined by prompt quality. The prompt is engineered to maximize structural correctness and minimize hallucination.
@@ -1222,84 +1175,6 @@ Natural language → Generated SQL
    GROUP BY MONTH(created_at)
    ORDER BY month;
 ```
-
----
-
-## Setup Instructions
-
-### Prerequisites
-
-- Node.js 20+
-- npm 9+
-- Ollama installed and running
-- A MySQL, PostgreSQL, or SQLite database
-
-### 1. Install Ollama and Pull Llama3
-
-```bash
-# macOS
-brew install ollama
-
-# Linux
-curl -fsSL https://ollama.com/install.sh | sh
-
-# Pull Llama3
-ollama pull llama3
-
-# Verify Ollama is running
-ollama serve
-# Should start on http://localhost:11434
-```
-
-### 2. Clone and Install
-
-```bash
-git clone https://github.com/yourusername/idksql.git
-cd idksql
-npm install
-```
-
-### 3. Start the Development Environment
-
-```bash
-# Start all apps simultaneously via Turborepo
-npm run dev
-
-# This starts:
-# - Express server on http://localhost:3001
-# - React web app on http://localhost:5173
-# - VSCode extension build watcher
-```
-
-### 4. Install the VSCode Extension
-
-```bash
-cd apps/vscode-extension
-npm run build
-# Then: Ctrl+Shift+P → "Install from VSIX" → select dist/idksql.vsix
-```
-
-### 5. Add a Database Connection
-
-Open `http://localhost:5173`, click **Add Connection**, and enter your database credentials. Click **Test Connection** before saving — this validates that the adapter can reach the database and authenticate successfully.
-
----
-
-## Running Ollama Locally
-
-```bash
-# Start Ollama server (if not running as a service)
-ollama serve
-
-# Verify Llama3 is available
-ollama list
-# Should show: llama3   ...
-
-# Test Ollama directly
-curl http://localhost:11434/api/generate \
-  -d '{"model":"llama3","prompt":"SELECT","stream":false}'
-```
-
 **Performance notes:**
 - Llama3 8B runs comfortably on 8GB RAM with 4GB available for the model
 - Llama3 70B requires 40GB RAM — not recommended for most development machines
@@ -1308,89 +1183,11 @@ curl http://localhost:11434/api/generate \
 
 ---
 
-## Development Workflow
-
-```bash
-# Full dev environment
-npm run dev
-
-# Individual apps
-npm run dev --filter=server
-npm run dev --filter=web
-npm run dev --filter=vscode-extension
-
-# Type checking
-npm run type-check
-
-# Build for production
-npm run build
-
-# Run tests
-npm run test
-```
-
-### Adding a New Database Adapter
-
-1. Create `apps/server/src/adapters/newdb.ts`
-2. Implement `DatabaseAdapter` interface
-3. Add `case 'newdb'` to `factory.ts`
-4. Add `newdb` to the `AdapterType` union in `types/database.ts`
-5. Done. All routes, all tests, all existing code works immediately.
-
----
-
-## Technical Challenges Solved
-
-**Challenge: LLMs hallucinate table names**
-Solution: Schema injection via `promptBuilder.ts` — the model cannot hallucinate what you've explicitly told it.
-
-**Challenge: Different databases have different schema query syntax**
-Solution: Adapter abstraction — each adapter implements `getSchema()` differently internally, but returns the same `SchemaContext` shape. The LLM layer never sees database-specific syntax.
-
-**Challenge: Destructive SQL from hallucinating models**
-Solution: Dangerous query detection layer positioned between generation and execution. Not an afterthought — a first-class system.
-
-**Challenge: Monorepo TypeScript type sharing**
-Solution: Turborepo workspace with shared types in `packages/shared-types`. The same `QueryResult` type is used in the server, the web app, and the extension. No drift.
-
-**Challenge: Monaco Editor inside VSCode extension**
-Solution: WebView architecture — the extension embeds a full browser panel, which can render Monaco natively. Native VSCode UI components cannot render Monaco.
-
----
-
-## Future Roadmap
-
-- [ ] **Streaming SQL generation** — render tokens as Ollama generates them, Monaco editor fills in real time
-- [ ] **Multi-query transactions** — execute sequences of related queries as a transaction with automatic rollback on failure
-- [ ] **Schema diff viewer** — compare schema versions over time, detect breaking changes
-- [ ] **Query optimization suggestions** — second LLM pass to suggest indexes and query rewrites
-- [ ] **Export to migration** — convert generated SQL into migration files for Prisma, Flyway, or Liquibase
-- [ ] **Team mode** — shared connection configs and query history across a team, self-hosted
-- [ ] **Fine-tuned model** — IDKSQL-specific Llama3 fine-tune trained on schema-aware SQL generation pairs
-- [ ] **MongoDB support** — natural language to aggregation pipeline generation
-- [ ] **Saved query library** — organize and tag frequently used queries
-- [ ] **Query scheduling** — execute saved queries on a cron schedule, results to Slack or email
-
----
-
-## Why This Project Exists
-
-Every database tool currently available falls into one of two categories: SQL clients that assume you already know SQL, or cloud services that charge per query and send your schema to their servers.
-
-IDKSQL is neither. It is a local-first, schema-aware, AI-augmented database interface built on the conviction that the gap between natural language and SQL should not require a cloud subscription or a decade of DBA experience to close.
-
-The project was built because the author was tired of writing `SELECT * FROM users WHERE last_login < NOW() - INTERVAL 30 DAY` from memory for the fourth time that week. If you know what you want to find, you should be able to say it. The database should understand.
-
----
 
 <div align="center">
 
-**Built for engineers who think in questions, not in syntax.**
-
-`ask your database anything`
+Made by **C.Kumaran**
 
 <br/>
-
-Made by **C.Kumaran**
 
 </div>
