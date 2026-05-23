@@ -1,0 +1,11 @@
+{
+  "name": "idksql",
+  "private": true,
+  "workspaces": [
+    "apps/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace=server",
+    "build": "npm run build --workspace=server"
+  }
+}
